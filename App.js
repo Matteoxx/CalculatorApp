@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
 
 export default class App extends Component {
@@ -11,7 +11,7 @@ export default class App extends Component {
       resultText: '',
       calculationText: ''
     }
-    this.operations = ['AC','+', '-', '*', '/']
+    this.operations = ['Del','+', '-', '*', '/']
   }
 
   calculateResult(){
@@ -34,30 +34,35 @@ export default class App extends Component {
   }
 
   buttonPressed(text) {
-
-    if (text == '='){
-      return this.validate() && this.calculateResult()
+    if(text == 'AC'){
+      this.setState({
+        resultText: '',
+        calculationText: ''
+      })
+    } else {
+      if (text == '='){
+        return this.validate() && this.calculateResult()
+      }
+    
+      this.setState({
+        resultText: this.state.resultText + text
+      })
     }
-
-    this.setState({
-      resultText: this.state.resultText + text
-    })
-
   }
 
   operate(operation){
     switch(operation){
-      case 'AC':
+      case 'Del':
+        let text = this.state.resultText.split('')
+        text.pop()
         this.setState({
-          resultText: '',
-          calculationText: ''
+          resultText: text.join('')
         })
         break
       case '+':
       case '-':
       case '*':
       case '/':
-
           const lastChar = this.state.resultText.split('').pop()
           if(this.operations.indexOf(lastChar) > 0) return
 
@@ -73,8 +78,8 @@ export default class App extends Component {
   render() {
 
     let rows = [];
-    let nums = [ [7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']];
-    for(let i = 0; i < 4; i++){
+    let nums = [ ['AC','',''],[7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']];
+    for(let i = 0; i < 5; i++){
       let row = [];
       for(let j=0; j < 3; j++){
         row.push(<TouchableOpacity style={styles.buttonNumbers} key = {nums[i][j]} onPress={()=>this.buttonPressed(nums[i][j])}>
@@ -122,7 +127,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
+
   },
   result: {
     flex: 2,
@@ -157,12 +163,15 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     borderWidth: 1,
     borderColor: '#a09ea1'
+ 
   },
   button: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
+    borderWidth: 1,
+    borderColor: '#a09ea1'
   },
   buttonText: {
     fontSize: 30
